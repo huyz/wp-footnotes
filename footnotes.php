@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP-Footnotes
 Plugin URI: http://www.elvery.net/drzax/more-things/wordpress-footnotes-plugin/
-Version: 4.2.1
+Version: 4.2.2
 Description: Allows a user to easily add footnotes to a post.
 Author: Simon Elvery, Huy Z
 Author URI: http://www.elvery.net/drzax/, http://huyz.us/
@@ -133,7 +133,6 @@ class swas_wp_footnotes {
 		add_action('the_content', array($this, 'process'), $this->current_options['priority']);
 		add_action('admin_menu', array($this, 'add_options_page')); 		// Insert the Admin panel.
 		add_action('wp_head', array($this, 'insert_styles'));
-		add_shortcode(WP_FOOTNOTES_SHORTCODE, array($this, 'embed_footnotes'));
 	}
 	
 	
@@ -141,10 +140,9 @@ class swas_wp_footnotes {
 	 * Searches the text and extracts footnotes. 
 	 * Adds the identifier links and creats footnotes list.
 	 * @param $data string The content of the post.
-	 * @param $shortcode_phase boolean Whether this function is being called as part do_shortcode
 	 * @return string The new content with footnotes generated.
 	 */
-	function process($data, $shortcode_phase=false) {
+	function process($data) {
 		global $post;
 
 		// Check for and setup the starting number
@@ -220,22 +218,15 @@ class swas_wp_footnotes {
 			$id_title = str_replace('"', "&quot;", htmlentities(strip_tags($value['text']), ENT_QUOTES, 'UTF-8'));
 			$id_replace = $this->current_options['pre_identifier'].'<a href="'.$id_href.'" id="'.$id_id.'" class="footnote-link footnote-identifier-link" title="'.$id_title.'">'.$id_num.'</a>'.$this->current_options['post_identifier'];
 			if ($this->current_options['superscript']) $id_replace = '<sup>'.$id_replace.'</sup>';
-
-			// No point modifying content for shortcode_phase
-			if (!$shortcode_phase) {
-				if ($display) $data = substr_replace($data, $id_replace, strpos($data,$value[0]),strlen($value[0]));
-				else $data = substr_replace($data, '', strpos($data,$value[0]),strlen($value[0]));
-			}
+			if ($display) $data = substr_replace($data, $id_replace, strpos($data,$value[0]),strlen($value[0]));
+			else $data = substr_replace($data, '', strpos($data,$value[0]),strlen($value[0]));
 		}
 
-		if ($shortcode_phase) {
-			// For shortcode phase, we just want to return the footnotes, not the entire content
-			$data = "";
-		} else {
-			// For non-shortcode phase, if there's a shortcode, we don't append duplicate footnotes
-			if (strpos($data, "[" . WP_FOOTNOTES_SHORTCODE . "]"))
-				$display = false;
-		}
+		// Change the meaning of $data, which will only contain the footnotes to display
+		// (huyz: This is so I don't have to modify the code below, but feel free to refactor
+		// and just rename $data to $footnotes to prevent a change in meaning)
+		$content = $data;
+		$data = "";
 		
 		// Display footnotes
 		if ($display) {
@@ -264,8 +255,23 @@ class swas_wp_footnotes {
 			}
 			$data = $data . '</ol>' . $this->current_options['post_footnotes'];
 		}
+
+		// Take content and replace any [footnotes] shortcode with the $data footnotes.
+		if (version_compare(PHP_VERSION, '5.1.0', '>=')) {
+			$content = preg_replace('/(?<!\[)\['.WP_FOOTNOTES_SHORTCODE.'\/?\](?!\])/', $data, $content, -1, &$count);
+		} else {
+			$newcontent = preg_replace('/(?<!\[)\['.WP_FOOTNOTES_SHORTCODE.'\/?\](?!\])/', $data, $content, -1);
+			$count = $newcontent === $content ? 0 : 1;
+		}
+
+		// No shortcode found, so append
+		if ($count == 0)
+			$content .= $data;
+
+		// Replace any escaped shortcodes
+		$content = preg_replace('/\[(\['.WP_FOOTNOTES_SHORTCODE.'\/?\])\]/', '$1', $content);
 		
-		return $data;
+		return $content;
 	}
 	
 	/**
@@ -364,10 +370,6 @@ class swas_wp_footnotes {
 			$j++;
 		}
 		
-	}
-
-	function embed_footnotes($attribute, $altcontent=null) {
-		return $this->process(get_the_content(), true);
 	}
 }
 
