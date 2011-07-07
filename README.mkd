@@ -20,6 +20,10 @@ The footnotes displayed in the middle of the content:
 
 ![footnotes shortcode](wp-footnotes/raw/master/screenshot-5.png)
 
+Feedback
+--------
+You can post comments on [my blog](http://huyz.us/2011/wp-footnotes-anywhere-in-the-content/).
+
 [GPLv2 License](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 ----------------------------------------------------------------------
 Copyright (C) 2007 Simon Elvery
