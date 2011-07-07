@@ -2,7 +2,7 @@ WP-Footnotes
 ============
 This is a fork of Simon Elvery's [WP-Foonotes](http://elvery.net/drzax/wordpress-footnotes-plugin) plugin for WordPress, which does what the name implies.
 
-Some people have requested additional features, so I figured I'd oblige.
+Some people have [requested](http://wordpress.org/support/topic/plugin-wp-footnotes-choose-where-to-put-footnotes-on-page) additional features, so I figured I'd oblige.
 
 This version:
 
@@ -19,3 +19,20 @@ Editing the post with a [footnotes] shortcode:
 The footnotes displayed in the middle of the content:
 
 ![footnotes shortcode](wp-footnotes/raw/master/screenshot-5.png)
+
+[GPLv2 License](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+----------------------------------------------------------------------
+Copyright (C) 2007 Simon Elvery
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as 
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
