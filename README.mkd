@@ -9,3 +9,13 @@ This version:
 *    Adds support for a [footnotes] shortcode which lets you control where in the content to place the footnotes -- even before the references, if you want.
 
 This repository is kept in sync with the [Subversion repo](http://wordpress.org/extend/plugins/wp-footnotes/) at the [WordPress.org Plugin Directory](http://wordpress.org/extend/plugins).
+
+Screenshots
+-----------
+Editing the post with a [footnotes] shortcode:
+
+![footnotes shortcode](wp-footnotes/raw/master/screenshot-4.png)
+
+The footnotes displayed in the middle of the content:
+
+![footnotes shortcode](wp-footnotes/raw/master/screenshot-5.png)
