@@ -22,7 +22,7 @@ The footnotes displayed in the middle of the content:
 
 Feedback
 --------
-You can post comments on [my blog](http://huyz.us/2011/wp-footnotes-anywhere-in-the-content/).
+You can post comments on the blog post [footnotes anywhere in the content of a WordPress post or page](http://huyz.us/2011/wordpress-footnotes-anywhere-in-the-content/).
 
 [GPLv2 License](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 ----------------------------------------------------------------------
