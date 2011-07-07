@@ -1,2 +1,11 @@
-wp-footnotes
+WP-Footnotes
 ============
+This is a fork of Simon Elvery's [WP-Foonotes](http://elvery.net/drzax/wordpress-footnotes-plugin) plugin for WordPress, which does what the name implies.
+
+Some people have requested additional features, so I figured I'd oblige.
+
+This version:
+
+*    Adds support for a [footnotes] shortcode which lets you control where in the content to place the footnotes -- even before the references, if you want.
+
+This repository is kept in sync with the [Subversion repo](http://wordpress.org/extend/plugins/wp-footnotes/) at the [WordPress.org Plugin Directory](http://wordpress.org/extend/plugins).

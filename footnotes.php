@@ -2,10 +2,10 @@
 /*
 Plugin Name: WP-Footnotes
 Plugin URI: http://www.elvery.net/drzax/more-things/wordpress-footnotes-plugin/
-Version: 4.2
+Version: 4.2.1
 Description: Allows a user to easily add footnotes to a post.
-Author: Simon Elvery
-Author URI: http://www.elvery.net/drzax/
+Author: Simon Elvery, Huy Z
+Author URI: http://www.elvery.net/drzax/, http://huyz.us/
 */
 
 /*
@@ -31,6 +31,7 @@ Author URI: http://www.elvery.net/drzax/
 define('WP_FOOTNOTES_OPEN', " ((");  //You can change this if you really have to, but I wouldn't recommend it.
 define('WP_FOOTNOTES_CLOSE', "))");  //Same with this one.
 define('WP_FOOTNOTES_VERSION', '4.2');
+define('WP_FOOTNOTES_SHORTCODE', "footnotes");
 
 // Instantiate the class 
 $swas_wp_footnotes = new swas_wp_footnotes();
@@ -39,7 +40,7 @@ $swas_wp_footnotes = new swas_wp_footnotes();
 class swas_wp_footnotes {
 	var $current_options;
 	var $default_options;
-	
+
 	/**
 	 * Constructor.
 	 */
@@ -132,6 +133,7 @@ class swas_wp_footnotes {
 		add_action('the_content', array($this, 'process'), $this->current_options['priority']);
 		add_action('admin_menu', array($this, 'add_options_page')); 		// Insert the Admin panel.
 		add_action('wp_head', array($this, 'insert_styles'));
+		add_shortcode(WP_FOOTNOTES_SHORTCODE, array($this, 'embed_footnotes'));
 	}
 	
 	
@@ -139,9 +141,10 @@ class swas_wp_footnotes {
 	 * Searches the text and extracts footnotes. 
 	 * Adds the identifier links and creats footnotes list.
 	 * @param $data string The content of the post.
+	 * @param $shortcode_phase boolean Whether this function is being called as part do_shortcode
 	 * @return string The new content with footnotes generated.
 	 */
-	function process($data) {
+	function process($data, $shortcode_phase=false) {
 		global $post;
 
 		// Check for and setup the starting number
@@ -214,11 +217,24 @@ class swas_wp_footnotes {
 			$id_id = "identifier_".$key."_".$post->ID;
 			$id_num = ($style == 'decimal') ? $value['use_footnote']+$start_number : $this->convert_num($value['use_footnote']+$start_number, $style, count($footnotes));
 			$id_href = ( ($use_full_link) ? get_permalink($post->ID) : '' ) . "#footnote_".$value['use_footnote']."_".$post->ID;
-			$id_title = str_replace('"', "&quot;", htmlentities(html_entity_decode(strip_tags($value['text']), ENT_QUOTES, 'UTF-8'), ENT_QUOTES, 'UTF-8'));
+			$id_title = str_replace('"', "&quot;", htmlentities(strip_tags($value['text']), ENT_QUOTES, 'UTF-8'));
 			$id_replace = $this->current_options['pre_identifier'].'<a href="'.$id_href.'" id="'.$id_id.'" class="footnote-link footnote-identifier-link" title="'.$id_title.'">'.$id_num.'</a>'.$this->current_options['post_identifier'];
 			if ($this->current_options['superscript']) $id_replace = '<sup>'.$id_replace.'</sup>';
-			if ($display) $data = substr_replace($data, $id_replace, strpos($data,$value[0]),strlen($value[0]));
-			else $data = substr_replace($data, '', strpos($data,$value[0]),strlen($value[0]));
+
+			// No point modifying content for shortcode_phase
+			if (!$shortcode_phase) {
+				if ($display) $data = substr_replace($data, $id_replace, strpos($data,$value[0]),strlen($value[0]));
+				else $data = substr_replace($data, '', strpos($data,$value[0]),strlen($value[0]));
+			}
+		}
+
+		if ($shortcode_phase) {
+			// For shortcode phase, we just want to return the footnotes, not the entire content
+			$data = "";
+		} else {
+			// For non-shortcode phase, if there's a shortcode, we don't append duplicate footnotes
+			if (strpos($data, "[" . WP_FOOTNOTES_SHORTCODE . "]"))
+				$display = false;
 		}
 		
 		// Display footnotes
@@ -349,4 +365,10 @@ class swas_wp_footnotes {
 		}
 		
 	}
+
+	function embed_footnotes($attribute, $altcontent=null) {
+		return $this->process(get_the_content(), true);
+	}
 }
+
+# vim:set noexpandtab ts=4 sw=4:

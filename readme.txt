@@ -1,9 +1,9 @@
 === WP-Footnotes ===
-Contributors: drzax
+Contributors: drzax, huyz
 Tags: footnotes, post, posts, notes, reference, formatting, referencing, bibliography
 Requires at least: 2.0
-Tested up to: 3.0.1
-Stable tag: 4.2
+Tested up to: 3.0.5
+Stable tag: 4.2.1
 
 Allows post authors to easily add and manage footnotes in posts.
 
